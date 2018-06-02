@@ -1,5 +1,5 @@
 # Data.Dump
-A C# Data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.
+A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.
 Currently Data.Dump only supports saving to SQL Server, but is easily extendable to support other platforms.
 
 ## What's it for?
@@ -14,11 +14,11 @@ Here are some basic use cases, I'm sure you can come up with a few more.
 * ...
 
 ## How does it work?
-Under the hood Data.Dump uses .NET's DatatTables and DataSets for processing the data. While you can directly pass in your own DataTable or DataSet, the real power lies in the ability to pass in an any old object or collection thereof.
+Under the hood Data.Dump uses .NET's DataTables and DataSets for processing the data. While you can directly pass in your own DataTable or DataSet, the real power lies in the ability to pass in an any old object or collection thereof.
 
 When you pass in C# objects, these will be translated to the appropriate datastructure. Simple types will automatically be resolved, however complex types will need some mapping. Depending on your configuration, nested objects or lists will automatically be translated to seperate tables in the database, with a foreign key in place. 
 
-During processing, the data is transfered to a temptable using SQL Server's powerful bulkcopy technology. When ready, **any existing table with the same name will be dropped**, and replaced by the temptable. In this way the table will always reflect the latest structure and data changes, while minimizing downtime. 
+During processing, the data is transfered to a temptable using SQL Server's powerful bulkcopy technology. When ready, **any existing table with the same name will be dropped**, and replaced by the temptable. In this way the live table will always reflect the latest structure and data, while minimizing downtime. 
 
 Table names are automatically resolved based on the Clr Type, but you can easily pass in your naming when necessary.
 
