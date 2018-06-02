@@ -31,7 +31,7 @@ namespace Data.Dump.Sql.Sample
          */
         static void Main(string[] args)
         {
-            var run = Run.NestedNamedCollections;
+            var run = Run.Simple;
             var writeToConsole = false;
 
             Stopwatch stopWatch = new Stopwatch();
@@ -42,7 +42,7 @@ namespace Data.Dump.Sql.Sample
             switch (run)
             {
                 case Run.Simple:
-                    var pocos = DataFactory.Pocos(1000000);
+                    var pocos = DataFactory.Pocos(10000);
                     if (writeToConsole)
                     {
                         Console.WriteLine("##########POCOS##########");
