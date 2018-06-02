@@ -31,6 +31,11 @@ namespace Data.Dump.Schema.Sql
                 return $"{sqlType}({(column.MaxLength >= 0 ? column.MaxLength.ToString() : "max")})";
             }
 
+            if (sqlType == SqlDbType.Decimal)
+            {
+                return $"{sqlType}(18,9)";
+            }
+
             return sqlType.ToString();
         }
 
