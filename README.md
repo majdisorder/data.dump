@@ -31,7 +31,8 @@ Some examples and documentaion will be described here soon.
 For now, please refer to the included sample project.
 
 ### Instalation
-A nuget package will be available shortly. 
-
+```
+Install-Package Data.Dump.Sql 
+```
 
 *Please note this is a very early version of the product. Feel free to use and experiment with it, but be cautious when deploying in a production environment.*
