@@ -70,7 +70,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM cd $(ProjectDir)
-REM nuget pack -OutputDirectory "C:\Projects\nuget" -IncludeReferencedProjects</PostBuildEvent>
+    <PostBuildEvent>cd $(ProjectDir)
+nuget pack -OutputDirectory "C:\Projects\nuget" -IncludeReferencedProjects</PostBuildEvent>
   </PropertyGroup>
 </Project>
