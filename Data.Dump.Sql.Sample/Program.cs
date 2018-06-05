@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Data.Dump.Persistence.Sql;
-using Data.Dump.Schema;
+using Data.Dump.Schema.Mapping;
 using Data.Dump.Sql.Sample.Data;
 using Data.Dump.Sql.Sample.Models;
 using Data.Dump.Sql.Sample.Models.Projection;
@@ -31,7 +31,7 @@ namespace Data.Dump.Sql.Sample
          */
         static void Main(string[] args)
         {
-            var run = Run.Simple;
+            var run = Run.DeeplyNestedExtended;
             var writeToConsole = false;
 
             Stopwatch stopWatch = new Stopwatch();
@@ -151,6 +151,31 @@ namespace Data.Dump.Sql.Sample
                         });
                     break;
 
+                case Run.DeeplyNestedExtended:
+                    var deeplyNestedExtended = DataFactory.DeeplyNestedPocos(100).ToList();
+                    if (writeToConsole)
+                    {
+                        Console.WriteLine("##########DEEPLYNESTED##########");
+                        Console.WriteLine(JsonConvert.SerializeObject(deeplyNestedExtended, Formatting.Indented));
+                    }
+                    repo.Save(
+                        deeplyNestedExtended.AsEnumerable(),
+                        new FieldSelectorCollection<DeeplyNestedPoco>()
+                        {
+                            new FieldSelector<DeeplyNestedPoco, DeeplyNestedPoco>(x => x),
+                            new FieldSelector<DeeplyNestedPoco, IEnumerable<NestedPoco>, int>(
+                                x => x.NestedPocos,
+                                x => x.Id,
+                                "DeeplyNestedPocoId"
+                            ),
+                           new FieldSelector<DeeplyNestedPoco,  IEnumerable<Poco>, NestedPoco,int>(
+                               x => x.NestedPocos
+                                   .Select(n => new ForeignKeyModelPair<NestedPoco, IEnumerable<Poco>>(n,  n.Pocos)),
+                               x => x.Id
+                            )
+                        });
+                    break;
+
                 case Run.Complex:
                     var mapper = InitMapper();
                     var complex = DataFactory.ComplexPocos(1000);
@@ -214,7 +239,7 @@ namespace Data.Dump.Sql.Sample
 
         private enum Run
         {
-            Simple, Nested, DeeplyNested, Complex, SimpleNamedCollections, NestedNamedCollections
+            Simple, Nested, DeeplyNested, DeeplyNestedExtended, Complex, SimpleNamedCollections, NestedNamedCollections
         }
 
     }
