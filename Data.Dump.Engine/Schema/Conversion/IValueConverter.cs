@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Data.Dump.Schema
+namespace Data.Dump.Schema.Conversion
 {
     public interface IValueConverter
     {

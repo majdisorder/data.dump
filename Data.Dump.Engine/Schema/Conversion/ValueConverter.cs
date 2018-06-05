@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Data.Dump.Schema.Mapping;
 
 namespace Data.Dump.Schema.Conversion
 {

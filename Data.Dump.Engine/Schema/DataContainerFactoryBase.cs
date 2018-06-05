@@ -1,4 +1,6 @@
 ﻿using Data.Dump.Extensions;
+using Data.Dump.Schema.Conversion;
+using Data.Dump.Schema.Mapping;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,6 +59,18 @@ namespace Data.Dump.Schema
             RowCreated?.Invoke(this, e);
         }
 
+        private IEnumerable GetEnumerableModels(object item)
+        {
+            var data = (item as IModelContainer)?.GetModels() ?? item;
+
+            if (data is IEnumerable models)
+            {
+                return models;
+            }
+
+            return new[] { item };
+        }
+
         protected virtual IEnumerable<DataTable> FillDataTable<T>(DataTable table, IEnumerable data, int dumpEvery)
             where T : class
         {
@@ -69,26 +83,30 @@ namespace Data.Dump.Schema
             {
                 foreach (var item in data)
                 {
-                    var row = table.NewRow();
-                    foreach (DataColumn column in table.Columns)
+                    foreach (var model in GetEnumerableModels(item))
                     {
-                        if (propertyMap.TryGetValue(column.ColumnName, out var property))
+                        var row = table.NewRow();
+
+                        foreach (DataColumn column in table.Columns)
                         {
-                            row[column] = ApplyConversions(
-                                              property.GetValue(item, null),
-                                              property
-                                          ) ?? DBNull.Value;
+                            if (propertyMap.TryGetValue(column.ColumnName, out var property))
+                            {
+                                row[column] = ApplyConversions(
+                                                  property.GetValue(model, null),
+                                                  property
+                                              ) ?? DBNull.Value;
+                            }
                         }
-                    }
 
-                    OnRowCreated(new RowCreatedEventArgs(row, item));
+                        OnRowCreated(new RowCreatedEventArgs(row, item));
 
-                    table.Rows.Add(row);
+                        table.Rows.Add(row);
 
-                    if (table.Rows.Count == dumpEvery)
-                    {
-                        yield return table;
-                        table.Rows.Clear();
+                        if (table.Rows.Count == dumpEvery)
+                        {
+                            yield return table;
+                            table.Rows.Clear();
+                        }
                     }
                 }
             }
@@ -147,7 +165,7 @@ namespace Data.Dump.Schema
                 KnownTypePropertyMap.Add(type, propertyMap);
             }
         }
-        
+
         protected virtual bool TryAddColumn(DataTable table, string name, Type type, out DataColumn column)
         {
             var actualType = GetActualType(type);
@@ -161,7 +179,7 @@ namespace Data.Dump.Schema
                         AllowDBNull = actualType.IsNullable
                     })
                 );
-                
+
                 return true;
             }
 

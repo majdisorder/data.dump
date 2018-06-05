@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.Dump.Schema.Mapping;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace Data.Dump.Schema
 
         private static void ClearDataSetTables(DataSet set)
         {
-           var tables = new DataTable[set.Tables.Count];
+            var tables = new DataTable[set.Tables.Count];
             set.Tables.CopyTo(tables, 0);
 
             foreach (DataTable table in tables)
@@ -26,7 +27,7 @@ namespace Data.Dump.Schema
             }
         }
 
-        private void HandleIdField<T>(IFieldSelectorWithParentId<T> idSelector, T root, DataTable table,
+        private void HandleForeignKeyField<T>(IFieldSelectorWithForeignKey<T> idSelector, object root, DataTable table,
             ref EventHandler<RowCreatedEventArgs> rowCreated)
             where T : class
         {
@@ -38,7 +39,7 @@ namespace Data.Dump.Schema
 
             if (idSelector == null) return;
 
-            var column = GetColumn(table, idSelector.ParentIdFieldName() ?? "Auto_ParentId", idSelector.IdFieldType);
+            var column = EnsureForeignKeyColumn(table, idSelector.ForeignKeyName() ?? "Auto_ParentId", idSelector.ForeignKeyType);
 
             if (column != null)
             {
@@ -46,13 +47,16 @@ namespace Data.Dump.Schema
                 {
                     if ((args.Row?.Table.Columns.Contains(column.ColumnName) ?? false))
                     {
-                        args.Row[column.ColumnName] = idSelector.GetParentIdField(root) ?? DBNull.Value;
+                        args.Row[column.ColumnName] = idSelector
+                                .GetForeignKey(
+                                    (args.Model as IForeignKeyContainer)?.GetForeignKeyModel() ?? root
+                                ) ?? DBNull.Value;
                     }
                 });
             }
         }
 
-        private DataColumn GetColumn(DataTable table, string name, Type type)
+        private DataColumn EnsureForeignKeyColumn(DataTable table, string name, Type type)
         {
             var colName = TableDefinitionGenerator.GetValidName(name);
             if (table.Columns.Contains(colName))
@@ -60,11 +64,11 @@ namespace Data.Dump.Schema
                 return table.Columns[colName];
             }
 
-            return TryAddColumn(table, name, type, out var column) ? 
-                column : 
-                null;
-        }
+            if (!TryAddColumn(table, name, type, out var column)) return null;
 
+            column.AllowDBNull = true;
+            return column;
+        }
 
         public virtual IEnumerable<DataSet> Create<T>(
             IEnumerable<T> data, FieldSelectorCollection<T> fieldSelectors, int dumpEvery = 100000)
@@ -96,7 +100,7 @@ namespace Data.Dump.Schema
             where T : class
         {
             EventHandler<RowCreatedEventArgs> rowCreated = null;
-            
+
             var tables = new Dictionary<string, DataTable>();
 
             foreach (var model in data)
@@ -113,9 +117,14 @@ namespace Data.Dump.Schema
 
                     }
 
-                    HandleIdField(selector as IFieldSelectorWithParentId<T>, model, table, ref rowCreated);
-
                     var value = selector.GetField(model);
+
+                    HandleForeignKeyField(
+                        selector as IFieldSelectorWithForeignKey<T>, 
+                        model, 
+                        table, 
+                        ref rowCreated
+                    );
 
                     var tempResults = FillDataTable(
                         selector.FieldType,

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Data.Dump.Schema.Mapping;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Data.Dump.Schema

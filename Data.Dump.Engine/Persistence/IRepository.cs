@@ -1,4 +1,4 @@
-﻿using Data.Dump.Schema;
+﻿using Data.Dump.Schema.Mapping;
 using System.Collections.Generic;
 using System.Data;
 

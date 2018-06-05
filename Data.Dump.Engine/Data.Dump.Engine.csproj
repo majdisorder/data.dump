@@ -57,12 +57,16 @@
     <Compile Include="Schema\DataContainerFactoryBase.cs" />
     <Compile Include="Schema\DataSetFactory.cs" />
     <Compile Include="Schema\DataTableFactory.cs" />
-    <Compile Include="Schema\FieldSelector.cs" />
+    <Compile Include="Schema\Mapping\FieldSelector.cs" />
     <Compile Include="Schema\IDataSetFactory.cs" />
     <Compile Include="Schema\IDataTableFactory.cs" />
-    <Compile Include="Schema\IFieldSelector.cs" />
+    <Compile Include="Schema\Mapping\IFieldSelector.cs" />
     <Compile Include="Schema\ITableDefinitionGenerator.cs" />
-    <Compile Include="Schema\IValueConverter.cs" />
+    <Compile Include="Schema\Conversion\IValueConverter.cs" />
+    <Compile Include="Schema\Mapping\ForeignKeyModelPair.cs" />
+    <Compile Include="Schema\Mapping\IForeignKeyContainer.cs" />
+    <Compile Include="Schema\Mapping\IModelContainer.cs" />
+    <Compile Include="Schema\Mapping\SingleValue.cs" />
     <Compile Include="Schema\TableDefinitionGenerator.cs" />
     <Compile Include="Schema\Conversion\ValueConverter.cs" />
   </ItemGroup>
@@ -71,7 +75,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM cd $(ProjectDir)
-REM nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
+    <PostBuildEvent>cd $(ProjectDir)
+nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
   </PropertyGroup>
 </Project>
