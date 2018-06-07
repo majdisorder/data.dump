@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace Data.Dump.Schema.Mapping
 {
     public class ForeignKeyModelPair<TFk, TModel> : IForeignKeySelect<TFk, TModel>, IModelContainer, IForeignKeyContainer
+        where TModel : class
+        where TFk : class
     {
         public ForeignKeyModelPair(TFk foreignKeyModel, TModel model)
         {
@@ -40,7 +42,9 @@ namespace Data.Dump.Schema.Mapping
         }
     }
 
-    public interface IForeignKeySelect<out TFk, out TModel>
+    public interface IForeignKeySelect<TFk, TModel> 
+        where TModel : class
+        where TFk : class
     {
     }
 }

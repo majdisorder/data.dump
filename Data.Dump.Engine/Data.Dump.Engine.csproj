@@ -57,6 +57,9 @@
     <Compile Include="Schema\DataContainerFactoryBase.cs" />
     <Compile Include="Schema\DataSetFactory.cs" />
     <Compile Include="Schema\DataTableFactory.cs" />
+    <Compile Include="Schema\Mapping\Extensions\ModelSelectorCollectionExtensions.cs" />
+    <Compile Include="Schema\Mapping\Extensions\ModelExtensions.cs" />
+    <Compile Include="Schema\Mapping\Models.cs" />
     <Compile Include="Schema\Mapping\FieldSelector.cs" />
     <Compile Include="Schema\IDataSetFactory.cs" />
     <Compile Include="Schema\IDataTableFactory.cs" />
