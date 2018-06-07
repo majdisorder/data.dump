@@ -9,6 +9,7 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using Data.Dump.Schema.Mapping;
 
 namespace Data.Dump.Sql.Sample
 {

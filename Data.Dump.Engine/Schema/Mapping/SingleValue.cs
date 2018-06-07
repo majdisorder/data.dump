@@ -1,6 +1,6 @@
 ﻿namespace Data.Dump.Schema.Mapping
 {
-    internal class SingleValue<T>
+    public class SingleValue<T>
     {
         public SingleValue(T value)
         {
