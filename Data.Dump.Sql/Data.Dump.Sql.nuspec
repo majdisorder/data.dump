@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A Sql Server implmentation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</description>
     <summary>A Sql Server implmentation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</summary>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>Implements Data.Dump.Engine v0.2.1</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>data dump sql poco datatable dataset bulkcopy bulkinsert</tags>
   </metadata>
