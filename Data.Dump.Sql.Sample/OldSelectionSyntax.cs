@@ -1,48 +1,35 @@
-﻿using AutoMapper;
-using Data.Dump.Persistence.Sql;
-using Data.Dump.Schema.Mapping.Extensions;
+﻿using Data.Dump.Persistence.Sql;
+using Data.Dump.Schema.Mapping;
 using Data.Dump.Sql.Sample.Data;
 using Data.Dump.Sql.Sample.Models;
 using Data.Dump.Sql.Sample.Models.Projection;
 using Newtonsoft.Json;
 using System;
-using System.Configuration;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Data.Dump.Sql.Sample
 {
-    class Program
+    /// <summary>
+    /// This class contains examples on how to use the old selection syntax. 
+    /// It is here purely as a reference.
+    /// </summary>
+    public static class OldSelectionSyntax
     {
-        public static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["Dump"].ConnectionString;
-        /*
-         * Note: Running all the examples in one go has no point, as the tables of the same type would be overwritten when no name is specified.
-         * So Pick one, and take your time to examine the results in the database. 
-         *
-         * I tried to choose some workable sizes for the datasets, so you don't have to wait forever until it completes. Feel free to experiment.
-         * Running the simple poco sample for 1000000 items takes a little less then 30 seconds on my machine, with memory usage never exceeding 70mb.
-         * Keep in mind that the nested examples generate an exponential amount of data for the nested lists, so beware.
-         *
-         * Be advised that enabling 'writeToConsole' to the console will jsonserialize the poco's, which takes considerable amounts of time. 
-         *
-         * Also, sorry for the ugly switch statement, but this is just an example project. Live with it ;)
-         *
-         * Check out OldSelectionSyntax.cs if you are interested in the old way of doing things. Be advised it may hurt your eyes.
-         *
-         */
-        static void Main(string[] args)
+        public static void Run()
         {
-            var run = Run.DeeplyNestedExtended;
+            var run = Program.Run.Nested;
             var writeToConsole = false;
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var repo = new SqlRepository(new SqlStore(ConnectionString));
-            
+            var repo = new SqlRepository(new SqlStore(Program.ConnectionString));
+
             switch (run)
             {
-                case Run.Simple:
+                case Program.Run.Simple:
                     var pocos = DataFactory.Pocos(10000);
                     if (writeToConsole)
                     {
@@ -52,7 +39,7 @@ namespace Data.Dump.Sql.Sample
                     repo.Save(pocos);
                     break;
 
-                case Run.SimpleNamedCollections:
+                case Program.Run.SimpleNamedCollections:
                     var first = DataFactory.Pocos(100);
                     var second = DataFactory.Pocos(100);
                     if (writeToConsole)
@@ -67,26 +54,27 @@ namespace Data.Dump.Sql.Sample
                     repo.Save(second, "SecondCollection");
                     break;
 
-                case Run.Nested:
+                case Program.Run.Nested:
                     var nested = DataFactory.NestedPocos(1000);
                     if (writeToConsole)
                     {
                         Console.WriteLine("##########NESTED##########");
                         Console.WriteLine(JsonConvert.SerializeObject(nested, Formatting.Indented));
                     }
-                    repo.Save(
-                        nested, 
-                        Schema.Mapping.Models.Map<NestedPoco>()
-                            .SelectModel(x => x) //make sure to pass in the base model as well, or it won't get saved. Unless that is what you want.
-                            .SelectModel(
-                                x => x.Pocos,
-                                x => x.Id,
-                                "NestedPocoId"
-                            )
-                    );
+
+                    repo.Save(nested, new FieldSelectorCollection<NestedPoco>()
+                    {
+
+                        new FieldSelector<NestedPoco, NestedPoco>(x => x),
+                        new FieldSelector<NestedPoco, IEnumerable<Poco>, int>(
+                            x => x.Pocos,
+                            x => x.Id,
+                            "NestedPocoId"
+                        )
+                    });
                     break;
 
-                case Run.NestedNamedCollections:
+                case Program.Run.NestedNamedCollections:
                     var firstNested = DataFactory.NestedPocos(100);
                     var secondNested = DataFactory.NestedPocos(100);
                     if (writeToConsole)
@@ -98,43 +86,62 @@ namespace Data.Dump.Sql.Sample
                     }
 
                     //when creating datasets you can also pass in collection names
-                    repo.Save(
-                        firstNested,
-                        Schema.Mapping.Models.Map<NestedPoco>()
-                            .SelectModel(
-                                x => x, 
-                                "FirstNestedCollection"
-                            )
-                            .SelectModel(
-                                x => x.Pocos,
-                                "FirstSubCollection",
-                                x => x.Id,
-                                "NestedPocoId"
-                            )
-                    );
+                    repo.Save(firstNested, new FieldSelectorCollection<NestedPoco>()
+                    {
+                        new FieldSelector<NestedPoco, NestedPoco>(x => x, "FirstNestedCollection"),
+                        new FieldSelector<NestedPoco, IEnumerable<Poco>, int>(
+                            x => x.Pocos,
+                            "FirstSubCollection",
+                            x => x.Id,
+                            "NestedPocoId"
+                        )
+                    });
 
                     //you can even pass in a function to return the name
+                    repo.Save(secondNested, new FieldSelectorCollection<NestedPoco>()
+                    {
+                        new FieldSelector<NestedPoco, NestedPoco>(x => x, () => "SecondNestedCollection"),
+                        new FieldSelector<NestedPoco, IEnumerable<Poco>, int>(
+                            x => x.Pocos,
+                            () => "SecondSubCollection",
+                            x => x.Id,
+                            "NestedPocoId"
+                        )
+                    });
+                    break;
+
+                case Program.Run.DeeplyNested:
+                    var deeplyNested = DataFactory.DeeplyNestedPocos(100).ToList();
+                    if (writeToConsole)
+                    {
+                        Console.WriteLine("##########DEEPLYNESTED##########");
+                        Console.WriteLine(JsonConvert.SerializeObject(deeplyNested, Formatting.Indented));
+                    }
                     repo.Save(
-                        secondNested,
-                        Schema.Mapping.Models.Map<NestedPoco>()
-                            .SelectModel(
-                                x => x, 
-                                () => "SecondNestedCollection"
+                        deeplyNested.AsEnumerable(),
+                        new FieldSelectorCollection<DeeplyNestedPoco>()
+                        {
+                            new FieldSelector<DeeplyNestedPoco, DeeplyNestedPoco>(x => x),
+                            new FieldSelector<DeeplyNestedPoco, IEnumerable<NestedPoco>, int>(
+                                x => x.NestedPocos,
+                                x => x.Id,
+                                "DeeplyNestedPocoId"
                             )
-                            .SelectModel(
+                        });
+                    //NOTE this will enumerate twice; look at Run.DeeplyNestedExtended for a better example
+                    repo.Save(
+                        deeplyNested.SelectMany(x => x.NestedPocos),
+                        new FieldSelectorCollection<NestedPoco>()
+                        {
+                            new FieldSelector<NestedPoco, IEnumerable<Poco>, int>(
                                 x => x.Pocos,
-                                () => "SecondSubCollection",
                                 x => x.Id,
                                 "NestedPocoId"
                             )
-                        );
+                        });
                     break;
 
-                case Run.DeeplyNested:
-                    // this is now obsolete; check out OldSelectionSyntax.cs if you are interested; Otherwise, just look at Run.DeeplyNestedExtended
-                    break;
-
-                case Run.DeeplyNestedExtended:
+                case Program.Run.DeeplyNestedExtended:
                     var deeplyNestedExtended = DataFactory.DeeplyNestedPocos(100).ToList();
                     if (writeToConsole)
                     {
@@ -143,85 +150,70 @@ namespace Data.Dump.Sql.Sample
                     }
                     repo.Save(
                         deeplyNestedExtended.AsEnumerable(),
-                        Schema.Mapping.Models.Map<DeeplyNestedPoco>()
-                            .SelectModel(x => x)
-                            .SelectModel(
+                        new FieldSelectorCollection<DeeplyNestedPoco>()
+                        {
+                            new FieldSelector<DeeplyNestedPoco, DeeplyNestedPoco>(x => x),
+                            new FieldSelector<DeeplyNestedPoco, IEnumerable<NestedPoco>, int>(
                                 x => x.NestedPocos,
                                 x => x.Id,
                                 "DeeplyNestedPocoId"
-                            )
-                            .SelectNestedModel(
+                            ),
+                           new FieldSelector<DeeplyNestedPoco,  IEnumerable<Poco>, NestedPoco,int>(
                                x => x.NestedPocos
-                                    .Select(n => n.Pocos.WithRoot(n)),
+                                   .Select(n => new ForeignKeyModelPair<NestedPoco, IEnumerable<Poco>>(n,  n.Pocos)),
                                x => x.Id
                             )
-                        );
+                        });
                     break;
 
-                case Run.Complex:
-                    var mapper = InitMapper();
+                case Program.Run.Complex:
+                    var mapper = Program.InitMapper();
                     var complex = DataFactory.ComplexPocos(1000);
-                    if(writeToConsole)
+                    if (writeToConsole)
                     {
                         Console.WriteLine("##########COMPLEX##########");
                         Console.WriteLine(JsonConvert.SerializeObject(complex, Formatting.Indented));
                     }
                     repo.Save(
                         complex,
-                        Schema.Mapping.Models.Map<ComplexPoco>()
-                            .SelectModel(x => x)
-                            .SelectModel(
+                        new FieldSelectorCollection<ComplexPoco>()
+                        {
+                            new FieldSelector<ComplexPoco, Poco, int>(
                                 x => x.InnerPoco,
                                 x => x.Id,
                                 "ComplexPocoId"
-                            )
-                            .SelectModel(
+                            ),
+                            new FieldSelector<ComplexPoco, IDictionary<string, string>, int>(
                                 x => x.SimpleDictionary,
                                 x => x.Id,
                                 "ComplexPocoId"
-                            )
-                            .SelectModel(
+                            ),
+                            new FieldSelector<ComplexPoco, IEnumerable<DictPoco>, int>(
                                 x => x.ComplexDictionary.Select(
-                                    p => mapper.Map(p.Value, new DictPoco { DictKey = p.Key })
+                                    p => mapper.Map(p.Value, new DictPoco{ DictKey = p.Key })
                                 ),
                                 x => x.Id,
                                 "ComplexPocoId"
-                            )
+                            ),
                             //TODO: add possibilty to map enumerables of 'single value' objects without mapping
-                            .SelectModel(
+                            new FieldSelector<ComplexPoco, IEnumerable<SingleValue<string>>, int>(
                                 x => x.SimpleCollection.Select(p => new SingleValue<string>(p)),
                                 x => x.Id,
                                 "ComplexPocoId"
-                            )
-                            .SelectModel(
+                            ),
+                            new FieldSelector<ComplexPoco, IEnumerable<Poco>, int>(
                                 x => x.ComplexCollection,
                                 x => x.Id,
                                 "ComplexPocoId"
                             )
+                        }
                     );
                     break;
             }
             stopWatch.Stop();
-            
+
             Console.WriteLine($"All done in {stopWatch.ElapsedMilliseconds}ms. Press any key.");
             Console.ReadKey(true);
-
-            //TODO: add some examples on how to set up dependency injection
         }
-
-        public static IMapper InitMapper()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Poco, DictPoco>();
-            });
-            return config.CreateMapper();
-        }
-
-        public enum Run
-        {
-            Simple, Nested, DeeplyNested, DeeplyNestedExtended, Complex, SimpleNamedCollections, NestedNamedCollections
-        }
-
     }
 }

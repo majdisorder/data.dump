@@ -57,9 +57,10 @@
     <Compile Include="Models\DeeplyNestedPoco.cs" />
     <Compile Include="Models\NestedPoco.cs" />
     <Compile Include="Models\Poco.cs" />
+    <Compile Include="Models\Projection\SingleValue.cs" />
+    <Compile Include="OldSelectionSyntax.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\Projection\SingleValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
