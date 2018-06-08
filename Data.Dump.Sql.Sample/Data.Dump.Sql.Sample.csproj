@@ -32,8 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.7.0.0\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Data.Dump.Engine, Version=0.2.1.42711, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Data.Dump.Engine.0.2.1.42711\lib\net462\Data.Dump.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Data.Dump.Sql, Version=0.2.1.25943, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Data.Dump.Sql.0.2.1.25943\lib\net462\Data.Dump.Sql.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -42,6 +48,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -66,15 +75,5 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\Data.Dump.Engine\Data.Dump.Engine.csproj">
-      <Project>{544af6a9-5cd3-4f0a-8826-1a3c884ee288}</Project>
-      <Name>Data.Dump.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Data.Dump.Sql\Data.Dump.Sql.csproj">
-      <Project>{c633d79c-5248-4dba-9026-b55f2e5c95a1}</Project>
-      <Name>Data.Dump.Sql</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
