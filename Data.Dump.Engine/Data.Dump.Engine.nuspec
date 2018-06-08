@@ -22,6 +22,6 @@
       - Moved fieldselectors to Data.Dump.Schema.Mapping namespace.
     </releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>data dump bulk import export dataset datatable poco</tags>
+    <tags>data dump bulk import export dataset datatable poco extraction BI reporting</tags>
   </metadata>
 </package>
