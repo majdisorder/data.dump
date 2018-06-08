@@ -41,9 +41,8 @@ namespace Data.Dump.Schema
             TableDefinitionGenerator = tableDefinitionGenerator;
         }
 
-        private static object ApplyConversions(object value, PropertyInfo property)
+        private static object ApplyConversions(Type type, object value, PropertyInfo property = null)
         {
-            var type = property.PropertyType;
             value = ValueConverters
                 .Where(x => type.IsAssignableTo(x.ForType))
                 .Aggregate(
@@ -59,16 +58,16 @@ namespace Data.Dump.Schema
             RowCreated?.Invoke(this, e);
         }
 
-        private IEnumerable GetEnumerableModels(object item)
+        private IEnumerable GetEnumerableModels(object item, bool isPrimitive)
         {
             var data = (item as IModelContainer)?.GetModels() ?? item;
 
-            if (data is IEnumerable models)
+            if (data is IEnumerable models && !isPrimitive)
             {
                 return models;
             }
 
-            return new[] { item };
+            return new[] { data };
         }
 
         protected virtual IEnumerable<DataTable> FillDataTable<T>(DataTable table, IEnumerable data, int dumpEvery)
@@ -83,7 +82,10 @@ namespace Data.Dump.Schema
             {
                 foreach (var item in data)
                 {
-                    foreach (var model in GetEnumerableModels(item))
+                    var modelType = item.GetType();
+                    var isPrimitive = IsDbSupportedType(modelType);
+
+                    foreach (var model in GetEnumerableModels(item, isPrimitive))
                     {
                         var row = table.NewRow();
 
@@ -91,10 +93,14 @@ namespace Data.Dump.Schema
                         {
                             if (propertyMap.TryGetValue(column.ColumnName, out var property))
                             {
-                                row[column] = ApplyConversions(
-                                                  property.GetValue(model, null),
-                                                  property
-                                              ) ?? DBNull.Value;
+                                row[column] = (isPrimitive ? 
+                                                    ApplyConversions(modelType, model) :
+                                                    ApplyConversions(
+                                                        property.PropertyType,
+                                                        property.GetValue(model, null),
+                                                        property
+                                                    )
+                                                ) ?? DBNull.Value;
                             }
                         }
 
@@ -151,7 +157,9 @@ namespace Data.Dump.Schema
         {
             var propertyMap = new Dictionary<string, PropertyInfo>();
 
-            foreach (var property in type.GetProperties())
+            var actualType = GetActualTypeIfPrimitive(type);
+
+            foreach (var property in actualType.GetProperties())
             {
                 if (TryAddColumn(table, property.Name, property.PropertyType, out var column))
                 {
@@ -168,7 +176,7 @@ namespace Data.Dump.Schema
 
         protected virtual bool TryAddColumn(DataTable table, string name, Type type, out DataColumn column)
         {
-            var actualType = GetActualType(type);
+            var actualType = GetActualTypeIfNullable(type);
 
             if (IsDbSupportedType(actualType.Type))
             {
@@ -187,7 +195,18 @@ namespace Data.Dump.Schema
             return false;
         }
 
-        protected virtual (Type Type, bool IsNullable) GetActualType(Type type)
+        protected virtual Type GetActualTypeIfPrimitive(Type type)
+        {
+            if (IsDbSupportedType(type))
+            {
+                return typeof(SingleValue<>)
+                    .MakeGenericType(type);
+            }
+
+            return type;
+        }
+
+        protected virtual (Type Type, bool IsNullable) GetActualTypeIfNullable(Type type)
         {
             if (type.IsAssignableTo(typeof(Nullable<>)))
             {
