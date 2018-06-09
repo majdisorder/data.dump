@@ -30,10 +30,20 @@ namespace Data.Dump.Schema
         protected static readonly IDictionary<Type, IDictionary<string, PropertyInfo>> KnownTypePropertyMap = new Dictionary<Type, IDictionary<string, PropertyInfo>>();
         protected static Type[] DbSupportedTypes =
         {
-            typeof(Boolean), typeof(Byte), typeof(Byte[]), typeof(Char), typeof(DateTime), typeof(Decimal),
-            typeof(Double), typeof(Guid), typeof(Int16), typeof(Int32), typeof(Int64), typeof(SByte),
-            typeof(Single), typeof(String), typeof(TimeSpan), typeof(UInt16), typeof(UInt32), typeof(UInt64)
+            typeof(bool), typeof(byte), typeof(byte[]), typeof(char), typeof(DateTime), typeof(decimal),
+            typeof(double), typeof(Guid), typeof(short), typeof(int), typeof(long), typeof(sbyte),
+            typeof(float), typeof(string), typeof(TimeSpan), typeof(ushort), typeof(uint), typeof(ulong)
         };
+        protected static Dictionary<Type, Type> PrimitiveSingleValueMap = new Dictionary<Type, Type>
+        {
+            { typeof(bool), typeof(SingleValue<bool>) }, { typeof(byte), typeof(SingleValue<byte>) }, { typeof(byte[]), typeof(SingleValue<byte[]>) },
+            { typeof(char), typeof(SingleValue<char>) }, { typeof(DateTime), typeof(SingleValue<DateTime>) }, { typeof(decimal), typeof(SingleValue<decimal>) },
+            { typeof(double), typeof(SingleValue<double>) }, { typeof(Guid), typeof(SingleValue<Guid>) }, { typeof(short), typeof(SingleValue<short>) },
+            { typeof(int), typeof(SingleValue<int>) }, { typeof(long), typeof(SingleValue<long>) }, { typeof(sbyte), typeof(SingleValue<sbyte>) },
+            { typeof(float), typeof(SingleValue<float>) }, { typeof(string), typeof(SingleValue<string>) }, { typeof(TimeSpan), typeof(SingleValue<TimeSpan>) },
+            { typeof(ushort), typeof(SingleValue<ushort>) }, { typeof(uint), typeof(SingleValue<uint>) }, { typeof(ulong), typeof(SingleValue<ulong>) }
+        };
+
         protected readonly ITableDefinitionGenerator TableDefinitionGenerator;
 
         protected DataContainerFactoryBase(ITableDefinitionGenerator tableDefinitionGenerator)
@@ -197,10 +207,9 @@ namespace Data.Dump.Schema
 
         protected virtual Type GetActualTypeIfPrimitive(Type type)
         {
-            if (IsDbSupportedType(type))
+            if (PrimitiveSingleValueMap.TryGetValue(type, out var actualType))
             {
-                return typeof(SingleValue<>)
-                    .MakeGenericType(type);
+                return actualType;
             }
 
             return type;
