@@ -78,7 +78,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM cd $(ProjectDir)
-REM nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
+    <PostBuildEvent>cd $(ProjectDir)
+nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
   </PropertyGroup>
 </Project>
