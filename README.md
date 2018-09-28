@@ -94,6 +94,8 @@ repo.Save(second, () => "SecondCollection"); //or as a function
 ```
 
 #### Mapping collections of primitive types
+**NOTE:** This is no longer needed as of version 0.2.3
+
 Currently there is no out of the box support for collections of primitive types. As these contain no valid information to use to create the columns, mapping will fail. Luckily there is an easy workaround:
 ```c#
 repo.Save(
