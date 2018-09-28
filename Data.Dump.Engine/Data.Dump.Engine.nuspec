@@ -21,7 +21,7 @@
       - Added better support for deeply nested models.
       - Added extension methods for easier mapping of models to datasets.
 
-      #Breaking changes:
+      Breaking changes:
       - Moved fieldselectors to Data.Dump.Schema.Mapping namespace.
     </releaseNotes>
     <copyright>Copyright 2018</copyright>
