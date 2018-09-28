@@ -143,6 +143,11 @@ namespace Data.Dump.Schema
                 }
             }
 
+            if (rowCreated != null)
+            {
+                RowCreated -= rowCreated;
+            }
+
             yield return tables.Values;
         }
     }
