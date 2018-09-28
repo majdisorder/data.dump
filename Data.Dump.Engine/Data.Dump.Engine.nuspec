@@ -13,12 +13,15 @@
     <description>A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</description>
     <summary>A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</summary>
     <releaseNotes>
-      Changes:
+      #Fixes:
+      - Bug: Same column name mapping overwrites data in different tables in the same dataset   
+      
+      #Changes:
       - Exposed Data.Dump.Schema.Mapping.SingleValue&lt;T&gt;
       - Added better support for deeply nested models.
       - Added extension methods for easier mapping of models to datasets.
 
-      Breaking changes:
+      #Breaking changes:
       - Moved fieldselectors to Data.Dump.Schema.Mapping namespace.
     </releaseNotes>
     <copyright>Copyright 2018</copyright>
