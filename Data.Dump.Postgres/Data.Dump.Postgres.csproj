@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\PostgresBulkCopy.cs" />
     <Compile Include="Persistence\Extensions\IDbConnectionExtensions.cs" />
     <Compile Include="Persistence\Postgres\IPostgresRepository.cs" />
     <Compile Include="Persistence\Postgres\IPostgresStore.cs" />
@@ -66,5 +67,6 @@
       <Name>Data.Dump.Engine</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

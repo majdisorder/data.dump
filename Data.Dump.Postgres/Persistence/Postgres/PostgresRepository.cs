@@ -1,9 +1,9 @@
-﻿using Data.Dump.Persistence.Extensions;
+﻿using Data.Dump.Data;
+using Data.Dump.Persistence.Extensions;
 using Data.Dump.Schema.Postgres;
 using Npgsql;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace Data.Dump.Persistence.Postgres
@@ -34,7 +34,7 @@ namespace Data.Dump.Persistence.Postgres
         {
         }
 
-        private static void Write(SqlBulkCopy bulkCopy, DataTable table, string destinationTableName)
+        private static void Write(PostgresBulkCopy bulkCopy, DataTable table, string destinationTableName)
         {
             bulkCopy.DestinationTableName = destinationTableName;
             bulkCopy.WriteToServer(table, DataRowState.Added);
@@ -43,7 +43,7 @@ namespace Data.Dump.Persistence.Postgres
         protected override IList<TablePair> Write(IDbConnection connection, DataSet data, IEnumerable<TablePair> tempTableMap = null)
         {
             var result = new List<TablePair>();
-            var bulkCopy = new SqlBulkCopy(connection.AsNpgsqlConnection());
+            var bulkCopy = new PostgresBulkCopy(connection.AsNpgsqlConnection());
             var tempTables = tempTableMap?.ToDictionary(x => x.LiveTable, x => x.TempTable);
             string tempTableName = null;
 
@@ -64,7 +64,7 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override TablePair Write(IDbConnection connection, DataTable table, string tempTableName = null)
         {
-            var bulkCopy = new SqlBulkCopy(connection.AsNpgsqlConnection());
+            var bulkCopy = new PostgresBulkCopy(connection.AsNpgsqlConnection());
             if (string.IsNullOrWhiteSpace(tempTableName))
             {
                 tempTableName = CreateTempSchema(connection, table).TableName;

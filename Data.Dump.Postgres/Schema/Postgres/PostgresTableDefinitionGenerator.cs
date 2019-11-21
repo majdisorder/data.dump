@@ -25,7 +25,8 @@ namespace Data.Dump.Schema.Postgres
 
         private string GetBuiltInPostgresType(NpgsqlDbType type)
         {
-            NpgsqlDbType.BuiltInPostgresType
+            //  NpgsqlDbType.BuiltInPostgresType
+            throw new NotImplementedException();
         }
 
         public override string GetDbType(DataColumn column)
@@ -54,7 +55,7 @@ namespace Data.Dump.Schema.Postgres
             objectName = objectName.Sanitize();
 
             return PostgresNamePattern.Replace(
-                objectName.Length > 85 ? objectName.Substring(0, 85) : objectName, 
+                objectName.Length > 85 ? objectName.Substring(0, 85) : objectName,
                 "\"$1\""
             );
         }
