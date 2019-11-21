@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C633D79C-5248-4DBA-9026-B55F2E5C95A1}</ProjectGuid>
+    <ProjectGuid>{8A553F5C-EB80-498B-AF1C-906D8ED3FA62}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Data.Dump</RootNamespace>
-    <AssemblyName>Data.Dump.Sql</AssemblyName>
+    <AssemblyName>Data.Dump.Postgres</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,20 +29,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,18 +42,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Persistence\Extensions\IDbConnectionExtensions.cs" />
-    <Compile Include="Persistence\Sql\ISqlRepository.cs" />
-    <Compile Include="Persistence\Sql\ISqlStore.cs" />
-    <Compile Include="Persistence\Sql\SqlRepository.cs" />
-    <Compile Include="Persistence\Sql\SqlStore.cs" />
+    <Compile Include="Persistence\Postgres\IPostgresRepository.cs" />
+    <Compile Include="Persistence\Postgres\IPostgresStore.cs" />
+    <Compile Include="Persistence\Postgres\PostgresRepository.cs" />
+    <Compile Include="Persistence\Postgres\PostgresStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schema\Conversion\Sql\TimespanToTicksConverter.cs" />
-    <Compile Include="Schema\Sql\ISqlDataSetFactory.cs" />
-    <Compile Include="Schema\Sql\ISqlDataTableFactory.cs" />
-    <Compile Include="Schema\Sql\ISqlTableDefinitionGenerator.cs" />
-    <Compile Include="Schema\Sql\SqlDataSetFactory.cs" />
-    <Compile Include="Schema\Sql\SqlDataTableFactory.cs" />
-    <Compile Include="Schema\Sql\SqlTableDefinitionGenerator.cs" />
+    <Compile Include="Schema\Conversion\Postgres\TimespanToTicksConverter.cs" />
+    <Compile Include="Schema\Postgres\IPostgresDataSetFactory.cs" />
+    <Compile Include="Schema\Postgres\IPostgresDataTableFactory.cs" />
+    <Compile Include="Schema\Postgres\IPostgresTableDefinitionGenerator.cs" />
+    <Compile Include="Schema\Postgres\PostgresDataSetFactory.cs" />
+    <Compile Include="Schema\Postgres\PostgresDataTableFactory.cs" />
+    <Compile Include="Schema\Postgres\PostgresTableDefinitionGenerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql">
+      <Version>4.1.2</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data.Dump.Engine\Data.Dump.Engine.csproj">
@@ -71,12 +66,5 @@
       <Name>Data.Dump.Engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)
-nuget pack -OutputDirectory "C:\Projects\nuget" -IncludeReferencedProjects</PostBuildEvent>
-  </PropertyGroup>
 </Project>

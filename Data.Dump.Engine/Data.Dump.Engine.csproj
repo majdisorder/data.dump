@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,7 +84,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM cd $(ProjectDir)
-REM nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
+    <PostBuildEvent>cd $(ProjectDir)
+nuget pack -OutputDirectory "C:\Projects\nuget"</PostBuildEvent>
   </PropertyGroup>
 </Project>
