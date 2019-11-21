@@ -1,4 +1,5 @@
-﻿using Data.Dump.Extensions;
+﻿using Data.Dump.Data;
+using Data.Dump.Extensions;
 using Npgsql;
 using NpgsqlTypes;
 using System;
@@ -10,6 +11,8 @@ namespace Data.Dump.Schema.Postgres
     public class PostgresTableDefinitionGenerator : TableDefinitionGenerator, IPostgresTableDefinitionGenerator
     {
         private static readonly Regex PostgresNamePattern = new Regex(@"^""?([^""]]+)""?$", RegexOptions.Compiled);
+        private static readonly Lazy<PostgresDbTypeResolver> TypeResolver = new Lazy<PostgresDbTypeResolver>();
+
         //private static readonly SqlDbType[] MaxSizeTypes =
         //{
         //    SqlDbType.NVarChar, SqlDbType.VarChar, SqlDbType.Binary, SqlDbType.VarBinary
@@ -21,12 +24,6 @@ namespace Data.Dump.Schema.Postgres
             {
                 DbType = GetDbType(type)
             }.NpgsqlDbType;
-        }
-
-        private string GetBuiltInPostgresType(NpgsqlDbType type)
-        {
-            //  NpgsqlDbType.BuiltInPostgresType
-            throw new NotImplementedException();
         }
 
         public override string GetDbType(DataColumn column)
@@ -42,7 +39,7 @@ namespace Data.Dump.Schema.Postgres
             //    return $"{sqlType}(18,9)";
             //}
 
-            return sqlType.ToString();
+            return TypeResolver.Value.Resolve(sqlType);
         }
 
         public override string GetValidName(string objectName)
