@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using NpgsqlTypes;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
-using NpgsqlTypes;
 
 namespace Data.Dump.Data
 {
@@ -37,7 +37,7 @@ namespace Data.Dump.Data
         public string Resolve(NpgsqlDbType type)
             => TypeMap.TryGetValue(type, out var postgresType) ?
                 postgresType :
-                "bytea";
+                "text";
 
     }
 }
