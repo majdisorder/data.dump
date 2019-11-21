@@ -76,17 +76,16 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override void GoLive(IDbConnection connection, string tempTableName, string liveTableName)
         {
+            //TODO: fix table exists check
             var command = CreateDbCommand(
                 connection,
-               "begin transaction; \r\n" +
-                $"if OBJECT_ID('{tempTableName}') is not null \r\n" +
-                "begin \r\n" +
-                $"if OBJECT_ID('{liveTableName}') is not null \r\n" +
-                "begin \r\n" +
+               "start transaction; \r\n" +
+                $"if OBJECT_ID('{tempTableName}') is not null then\r\n" +
+                $"if OBJECT_ID('{liveTableName}') is not null then\r\n" +
                 $"drop table {liveTableName}; \r\n" +
-                "end \r\n" +
-                $"exec sp_rename {tempTableName}, {liveTableName}; \r\n" +
-                "end \r\n" +
+                "end if\r\n" +
+                $"ALTER TABLE {tempTableName} RENAME TO {liveTableName}; \r\n" +
+                "end if\r\n" +
                 "commit transaction;"
             );
             
@@ -95,12 +94,12 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override IDbCommand GetCreateTableCommand(IDbConnection connection, DataTable table)
         {
+            //TODO: fix table exists check
             return CreateDbCommand(
                 connection,
-                $"if OBJECT_ID('{table.TableName}') is null \r\n" +
-                "begin \r\n" +
+                $"if OBJECT_ID('{table.TableName}') is null then\r\n" +
                 $"create {TableDefinitionGenerator.GetTableDefinition(table)}; \r\n" +
-                "end"
+                "end if"
             );
         }
 
