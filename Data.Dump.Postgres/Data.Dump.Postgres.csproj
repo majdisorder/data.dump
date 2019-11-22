@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\PostgresBulkCopy.cs" />
+    <Compile Include="Data\NpgsqlBulkCopy.cs" />
     <Compile Include="Data\PostgresDbTypeResolver.cs" />
     <Compile Include="Persistence\Extensions\IDbConnectionExtensions.cs" />
     <Compile Include="Persistence\Postgres\IPostgresRepository.cs" />
