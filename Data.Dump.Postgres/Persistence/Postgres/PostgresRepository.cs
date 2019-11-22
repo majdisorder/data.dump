@@ -120,7 +120,7 @@ namespace Data.Dump.Persistence.Postgres
                 "$func$ language plpgsql;\r\n" +
                 $"select  create_{functionId} ();\r\n" +
                 $"drop function create_{functionId};\r\n" +
-                "commit transaction;\r\n"
+                "commit transaction;"
             );
         }
 
