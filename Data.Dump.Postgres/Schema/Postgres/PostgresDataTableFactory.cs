@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Data.Dump.Schema.Conversion.Postgres;
+using System;
 using System.Data;
-using Data.Dump.Schema.Conversion.Postgres;
 
 namespace Data.Dump.Schema.Postgres
 {
     ///<inheritdoc cref="DataTableFactory" />
     /// <summary>
-    /// Default implmentation of DataTableFactory using ISqlTableDefinitionGenerator
+    /// Default implementation of DataTableFactory using IPostgresDataTableFactory
     /// </summary>
     public class PostgresDataTableFactory : DataTableFactory, IPostgresDataTableFactory
     { 

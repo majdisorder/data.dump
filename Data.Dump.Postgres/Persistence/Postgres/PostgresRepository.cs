@@ -2,6 +2,7 @@
 using Data.Dump.Persistence.Extensions;
 using Data.Dump.Schema.Postgres;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -76,16 +77,26 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override void GoLive(IDbConnection connection, string tempTableName, string liveTableName)
         {
-            //TODO: fix table exists check
+            var functionId = $"{Guid.NewGuid():N}";
             var command = CreateDbCommand(
                 connection,
-               "start transaction; \r\n" +
-                $"if OBJECT_ID('{tempTableName}') is not null then\r\n" +
-                $"if OBJECT_ID('{liveTableName}') is not null then\r\n" +
-                $"drop table {liveTableName}; \r\n" +
-                "end if\r\n" +
-                $"ALTER TABLE {tempTableName} RENAME TO {liveTableName}; \r\n" +
-                "end if\r\n" +
+                "start transaction;"+
+                $"create or replace function create_{functionId} ()\r\n" +
+                "returns void as\r\n" +
+                "$func$\r\n" +
+                "begin\r\n" +
+                "start transaction;\r\n" +
+                $"if exists (select to_regclass('{tempTableName}') is not null) then\r\n" +
+                $"if exists (select to_regclass('{liveTableName}') is not null) then\r\n" +
+                $"drop table {liveTableName};\r\n" +
+                "end if;\r\n" +
+                $"alter table {tempTableName} rename to {liveTableName};\r\n" +
+                "end if;\r\n" +
+                "commit transaction;\r\n" +
+                "end\r\n" +
+                "$func$ language plpgsql;\r\n" +
+                $"select  create_{functionId} ();\r\n"+
+                $"drop function create_{functionId};\r\n" +
                 "commit transaction;"
             );
             
@@ -94,12 +105,22 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override IDbCommand GetCreateTableCommand(IDbConnection connection, DataTable table)
         {
-            //TODO: fix table exists check
+            var functionId = $"{Guid.NewGuid():N}";
             return CreateDbCommand(
                 connection,
-                $"if OBJECT_ID('{table.TableName}') is null then\r\n" +
-                $"create {TableDefinitionGenerator.GetTableDefinition(table)}; \r\n" +
-                "end if"
+                "start transaction;\r\n" +
+                $"create or replace function create_{functionId} ()\r\n" +
+                "returns void as\r\n" +
+                "$func$\r\n" +
+                "begin\r\n" +
+                $"if (select to_regclass('{table.TableName}') is null) then\r\n" +
+                $"create {TableDefinitionGenerator.GetTableDefinition(table)};\r\n" +
+                "end if;\r\n" +
+                "end\r\n" +
+                "$func$ language plpgsql;\r\n" +
+                $"select  create_{functionId} ();\r\n" +
+                $"drop function create_{functionId};\r\n" +
+                "commit transaction;\r\n"
             );
         }
 
