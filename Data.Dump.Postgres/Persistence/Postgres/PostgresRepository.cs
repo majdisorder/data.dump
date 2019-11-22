@@ -35,16 +35,26 @@ namespace Data.Dump.Persistence.Postgres
         {
         }
 
-        private static void Write(PostgresBulkCopy bulkCopy, DataTable table, string destinationTableName)
+        private static void Write(NpgsqlBulkCopy bulkCopy, DataTable table, string destinationTableName)
         {
             bulkCopy.DestinationTableName = destinationTableName;
-            bulkCopy.WriteToServer(table, DataRowState.Added);
+            bulkCopy.WriteToServer(table);
+        }
+
+        private bool ShouldDeleteLiveTable(IDbConnection connection,string liveTableName)
+        {
+            var command = CreateDbCommand(
+                connection,
+                $"select case when to_regclass('{liveTableName}') is null then 0 else 1 end;"
+            );
+
+            return (int)command.ExecuteScalar() == 1;
         }
 
         protected override IList<TablePair> Write(IDbConnection connection, DataSet data, IEnumerable<TablePair> tempTableMap = null)
         {
             var result = new List<TablePair>();
-            var bulkCopy = new PostgresBulkCopy(connection.AsNpgsqlConnection());
+            var bulkCopy = new NpgsqlBulkCopy(connection.AsNpgsqlConnection(), TableDefinitionGenerator as IPostgresTableDefinitionGenerator);
             var tempTables = tempTableMap?.ToDictionary(x => x.LiveTable, x => x.TempTable);
             string tempTableName = null;
 
@@ -65,7 +75,7 @@ namespace Data.Dump.Persistence.Postgres
 
         protected override TablePair Write(IDbConnection connection, DataTable table, string tempTableName = null)
         {
-            var bulkCopy = new PostgresBulkCopy(connection.AsNpgsqlConnection());
+            var bulkCopy = new NpgsqlBulkCopy(connection.AsNpgsqlConnection(), TableDefinitionGenerator as IPostgresTableDefinitionGenerator);
             if (string.IsNullOrWhiteSpace(tempTableName))
             {
                 tempTableName = CreateTempSchema(connection, table).TableName;
@@ -85,14 +95,10 @@ namespace Data.Dump.Persistence.Postgres
                 "returns void as\r\n" +
                 "$func$\r\n" +
                 "begin\r\n" +
-                "start transaction;\r\n" +
                 $"if exists (select to_regclass('{tempTableName}') is not null) then\r\n" +
-                $"if exists (select to_regclass('{liveTableName}') is not null) then\r\n" +
-                $"drop table {liveTableName};\r\n" +
-                "end if;\r\n" +
+                (ShouldDeleteLiveTable(connection, liveTableName) ? $"drop table {liveTableName};\r\n": string.Empty) +
                 $"alter table {tempTableName} rename to {liveTableName};\r\n" +
                 "end if;\r\n" +
-                "commit transaction;\r\n" +
                 "end\r\n" +
                 "$func$ language plpgsql;\r\n" +
                 $"select  create_{functionId} ();\r\n"+
