@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Dump.Sql.Sample", "Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Dump.Postgres", "Data.Dump.Postgres\Data.Dump.Postgres.csproj", "{8A553F5C-EB80-498B-AF1C-906D8ED3FA62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Dump.Postgres.Sample", "Data.Dump.Postgres.Sample\Data.Dump.Postgres.Sample.csproj", "{7D4B9F9C-BB23-4915-AB51-461EABF144D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{8A553F5C-EB80-498B-AF1C-906D8ED3FA62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A553F5C-EB80-498B-AF1C-906D8ED3FA62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A553F5C-EB80-498B-AF1C-906D8ED3FA62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4B9F9C-BB23-4915-AB51-461EABF144D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4B9F9C-BB23-4915-AB51-461EABF144D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4B9F9C-BB23-4915-AB51-461EABF144D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4B9F9C-BB23-4915-AB51-461EABF144D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
