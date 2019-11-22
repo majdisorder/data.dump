@@ -10,7 +10,7 @@ namespace Data.Dump.Schema.Postgres
 {
     public class PostgresTableDefinitionGenerator : TableDefinitionGenerator, IPostgresTableDefinitionGenerator
     {
-        private static readonly Regex PostgresNamePattern = new Regex(@"^""?([^""]]+)""?$", RegexOptions.Compiled);
+        private static readonly Regex PostgresNamePattern = new Regex(@"^""?([^""]+)""?$", RegexOptions.Compiled);
         private static readonly Lazy<PostgresDbTypeResolver> TypeResolver = new Lazy<PostgresDbTypeResolver>();
 
         //private static readonly SqlDbType[] MaxSizeTypes =
