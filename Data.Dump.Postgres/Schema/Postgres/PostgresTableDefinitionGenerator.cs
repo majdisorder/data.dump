@@ -13,11 +13,6 @@ namespace Data.Dump.Schema.Postgres
         private static readonly Regex PostgresNamePattern = new Regex(@"^""?([^""]+)""?$", RegexOptions.Compiled);
         private static readonly Lazy<PostgresDbTypeResolver> TypeResolver = new Lazy<PostgresDbTypeResolver>();
 
-        //private static readonly SqlDbType[] MaxSizeTypes =
-        //{
-        //    SqlDbType.NVarChar, SqlDbType.VarChar, SqlDbType.Binary, SqlDbType.VarBinary
-        //};
-
         private NpgsqlDbType GetNpgsqlDbType(Type type)
         {
             return new NpgsqlParameter
@@ -29,16 +24,7 @@ namespace Data.Dump.Schema.Postgres
         public override string GetDbType(DataColumn column)
         {
             var sqlType = GetNpgsqlDbType(column.DataType);
-            //if (MaxSizeTypes.Contains(sqlType))
-            //{
-            //    return $"{sqlType}({(column.MaxLength >= 0 ? column.MaxLength.ToString() : "max")})";
-            //}
-
-            //if (sqlType == SqlDbType.Decimal)
-            //{
-            //    return $"{sqlType}(18,9)";
-            //}
-
+           
             return TypeResolver.Value.Resolve(sqlType);
         }
 
