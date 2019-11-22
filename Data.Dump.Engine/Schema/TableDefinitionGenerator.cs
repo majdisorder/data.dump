@@ -9,12 +9,12 @@ namespace Data.Dump.Schema
     {
         public virtual string GetTableDefinition(DataTable table)
         {
-            return $"table {GetValidName(table.TableName)}{GetColumDefinition(table)}";
+            return $"table {GetValidName(table.TableName)}{GetColumnDefinition(table)}";
         }
 
         public abstract string GetColumnDefinition(DataColumn column);
 
-        public virtual string GetColumDefinition(DataTable table)
+        public virtual string GetColumnDefinition(DataTable table)
         {
             var def = string.Join(
                 ", ",
