@@ -1,6 +1,6 @@
 # Data.Dump
 A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.
-Currently Data.Dump only supports saving to SQL Server, but is easily extendable to support other platforms.
+Currently Data.Dump only supports saving to SQL Server and Postgres 9.4+, but is easily extendable to support other platforms.
 
 ## What's it for?
 The library grew out of the need to transparantly store large datasets, without knowing the datastructure beforehand. 
