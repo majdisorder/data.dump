@@ -8,23 +8,16 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/dimi3tron/data.dump/blob/master/LICENSE</licenseUrl>
      <projectUrl>https://github.com/dimi3tron/data.dump</projectUrl>
-   <!-- <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</description>
     <summary>A C# data dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</summary>
     <releaseNotes>
-      #Fixes:
-      - Bug: Same column name mapping overwrites data in different tables in the same dataset   
-      
-      #Changes:
-      - Exposed Data.Dump.Schema.Mapping.SingleValue&lt;T&gt;
-      - Added better support for deeply nested models.
-      - Added extension methods for easier mapping of models to datasets.
+      Version 1.0 is here!
 
       Breaking changes:
-      - Moved fieldselectors to Data.Dump.Schema.Mapping namespace.
+      - Fixed a typo in the ITableDefinitionGenerator interface. GetColumDefinition is now GetColumnDefinition.
     </releaseNotes>
-    <copyright>Copyright 2018</copyright>
+    <copyright>Copyright 2019</copyright>
     <tags>data dump bulk import export dataset datatable poco extraction BI reporting</tags>
   </metadata>
 </package>

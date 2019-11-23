@@ -9,10 +9,10 @@
     <licenseUrl>https://github.com/dimi3tron/data.dump/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/dimi3tron/data.dump</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A Sql Server implmentation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</description>
-    <summary>A Sql Server implmentation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</summary>
+    <description>A PostgreSql implementation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</description>
+    <summary>A PostgreSql implementation of the Data.Dump engine for easy creation of data extractions based on any dataset or poco, with a low memory footprint.</summary>
     <releaseNotes>Implements Data.Dump.Engine v1.0.0</releaseNotes>
     <copyright>Copyright 2019</copyright>
-    <tags>data dump sql poco datatable dataset bulkcopy bulkinsert extraction BI reporting</tags>
+    <tags>data dump postgres postgressql sql poco datatable dataset bulkcopy bulkinsert extraction BI reporting</tags>
   </metadata>
 </package>
