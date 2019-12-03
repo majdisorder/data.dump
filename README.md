@@ -144,5 +144,3 @@ Please refer to the included sample project for more examples.
 ```
 Install-Package Data.Dump.Sql 
 ```
-
-*Please note this is a very early version of the product. Feel free to use and experiment with it, but be cautious when deploying in a production environment.*
